@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Calendar, Clock, User, CheckCircle, ChevronRight, ChevronLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, CheckCircle, ChevronLeft } from 'lucide-react';
 import { Service, Professional, BookingStep, BookingPayload } from '../types';
 import { PROFESSIONALS, TIME_SLOTS, N8N_WEBHOOK_URL } from '../constants';
 
@@ -10,7 +10,10 @@ interface BookingModalProps {
 }
 
 const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose }) => {
-  const [step, setStep] = useState<BookingStep>('SELECT_PROFESSIONAL');
+  // Lógica: Si es producto, empezamos en el paso de DATOS directamente
+  const initialStep = service.category === 'Productos' ? 'ENTER_DETAILS' : 'SELECT_PROFESSIONAL';
+  const [step, setStep] = useState<BookingStep>(initialStep);
+  
   const [selectedPro, setSelectedPro] = useState<Professional | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -18,50 +21,37 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
   const [phone, setPhone] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Helper to generate next 7 days
-  const getNextDays = () => {
-    const days = [];
-    for (let i = 0; i < 7; i++) {
-      const d = new Date();
-      d.setDate(d.getDate() + i);
-      days.push(d);
+  // Reiniciar el paso cuando se abre con un servicio nuevo
+  useEffect(() => {
+    if (isOpen) {
+      setStep(service.category === 'Productos' ? 'ENTER_DETAILS' : 'SELECT_PROFESSIONAL');
     }
-    return days;
-  };
-
-  const nextDays = getNextDays();
+  }, [isOpen, service]);
 
   const handleBook = async () => {
-    if (!selectedPro || !selectedDate || !selectedTime || !name || !phone) return;
-
     setIsSubmitting(true);
 
+    // Payload para n8n: Si es producto, mandamos valores por defecto para fecha/hora
     const payload: BookingPayload = {
       nombre_cliente: name,
       telefono_cliente: phone,
       servicio_id: service.id,
       servicio_nombre: service.name,
       precio: service.price,
-      fecha_hora: `${selectedDate} ${selectedTime}`,
-      barbero_id: selectedPro.id,
+      fecha_hora: service.category === 'Productos' ? '2026-01-01 00:00' : `${selectedDate} ${selectedTime}`,
+      barbero_id: service.category === 'Productos' ? 'V-CIOUS' : (selectedPro?.id || 'N/A'),
       source: 'web',
     };
 
     try {
-      // Send to N8N
       await fetch(N8N_WEBHOOK_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
-      // Show success step even if fetch fails in this demo environment (since URL is placeholder)
       setStep('CONFIRMATION');
     } catch (error) {
       console.error("Webhook error:", error);
-      // For demo purposes, we still show success
       setStep('CONFIRMATION');
     } finally {
       setIsSubmitting(false);
@@ -69,6 +59,8 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
   };
 
   if (!isOpen) return null;
+
+  // ... (Manten el resto de la UI pero asegúrate de quitar 'grayscale' en las imágenes de los barberos)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
