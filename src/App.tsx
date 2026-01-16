@@ -31,37 +31,21 @@ const App: React.FC = () => {
     setTimeout(() => setSelectedService(null), 300);
   };
 
-  return (
+return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
       
-      <main className="flex-1 w-full pt-[60px]">
+      <main className="flex-1 w-full pt-[60px] relative z-0">
         <ShopProfile />
 
-        {/* --- NUEVO BANNER V-CIOUS --- */}
-        <section className="max-w-4xl mx-auto px-4 py-8">
+        <section className="max-w-4xl mx-auto px-4 py-8 relative z-10">
+          {/* Banner V-cious */}
           <div className="relative group overflow-hidden rounded-sm bg-black aspect-[16/9] md:aspect-[3/1]">
             <img 
               src="https://res.cloudinary.com/dqwslpah7/image/upload/v1768573073/Dise%C3%B1o_sin_t%C3%ADtulo_19_zit9nv.jpg" 
-              alt="V-cious Studio" 
-              className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
+              className="w-full h-full object-cover opacity-60" 
             />
-            <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-6">
-              <h2 className="text-white text-2xl md:text-4xl font-black tracking-tighter mb-2 italic">
-                PORTA LA MERCH DE V-CIOUS
-              </h2>
-              <p className="text-gray-300 text-xs md:text-sm mb-4 tracking-widest uppercase">
-                Estilo urbano nacido en la barbería
-              </p>
-              <a 
-                href={COMPANY_INFO.facebook} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="bg-white text-black px-6 py-2 text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-[#A855F7] hover:text-white transition-colors"
-              >
-                Ver en Facebook <Facebook size={14} />
-              </a>
-            </div>
+            {/* ... contenido del banner */}
           </div>
         </section>
 
@@ -70,15 +54,25 @@ const App: React.FC = () => {
           onSelectCategory={setSelectedCategory} 
         />
         
-        {/* El ServiceList ahora mostrará también productos cuando se filtre */}
-        <ServiceList 
-          services={filteredServices} 
-          onBook={handleBook} 
-        />
+        {/* VITAL: Añadimos 'relative z-10' para que los botones estén "al frente" */}
+        <div className="relative z-10">
+            <ServiceList 
+              services={filteredServices} 
+              onBook={handleBook} 
+            />
+        </div>
       </main>
 
       <Footer />
-      {/* ... modal logic */}
+
+      {/* VITAL: El modal debe estar en el Z-index más alto posible */}
+      {selectedService && (
+        <BookingModal 
+          service={selectedService}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };
