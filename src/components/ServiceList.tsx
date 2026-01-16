@@ -38,11 +38,11 @@ const ServiceList: React.FC<ServiceListProps> = ({ services, onBook }) => {
 
                     <div className="flex flex-col items-end justify-center gap-2 pl-2">
                         <span className="font-bold text-lg">${service.price}</span>
-                        <button
-                            onClick={() => onBook(service)}
-                            className="bg-black text-white text-xs font-bold px-5 py-2.5 rounded-sm hover:bg-[#A855F7] transition-colors duration-300 uppercase tracking-widest min-w-[100px]"
+                      <button
+                          onClick={() => onBook(service)}
+                          className="bg-black text-white text-xs font-bold px-5 py-2.5 rounded-sm hover:bg-[#A855F7] transition-colors duration-300 uppercase tracking-widest min-w-[100px]"
                         >
-                            Agendar
+                          {service.category === 'Productos' ? 'Comprar' : 'Agendar'}
                         </button>
                     </div>
                 </div>
