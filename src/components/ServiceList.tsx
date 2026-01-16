@@ -20,14 +20,14 @@ const ServiceList: React.FC<ServiceListProps> = ({ services, onBook }) => {
                 key={service.id} 
                 className="group flex flex-col sm:flex-row bg-white overflow-hidden border-b border-gray-100 pb-6 last:border-0"
             >
-                {/* Mobile: Image on top, Desktop: Image on left (optional, prompt implied strict list, but lets add image thumbnail for premium feel) */}
                 <div className="flex gap-4 w-full items-center">
+                    {/* Imagen: Quitamos 'grayscale' para que se vea a color siempre */}
                     <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 overflow-hidden rounded-sm bg-gray-100">
                         <img 
                             src={service.image} 
                             alt={service.name}
                             loading="lazy"
-                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                            className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
                         />
                     </div>
                     
@@ -38,11 +38,12 @@ const ServiceList: React.FC<ServiceListProps> = ({ services, onBook }) => {
 
                     <div className="flex flex-col items-end justify-center gap-2 pl-2">
                         <span className="font-bold text-lg">${service.price}</span>
-                      <button
-                          onClick={() => onBook(service)}
-                          className="bg-black text-white text-xs font-bold px-5 py-2.5 rounded-sm hover:bg-[#A855F7] transition-colors duration-300 uppercase tracking-widest min-w-[100px]"
+                        {/* Botón: Verificamos que onBook se ejecute correctamente */}
+                        <button
+                            onClick={() => onBook(service)}
+                            className="bg-black text-white text-xs font-bold px-5 py-2.5 rounded-sm hover:bg-[#A855F7] transition-colors duration-300 uppercase tracking-widest min-w-[100px]"
                         >
-                          {service.category === 'Productos' ? 'Comprar' : 'Agendar'}
+                            {service.category === 'Productos' ? 'Comprar' : 'Agendar'}
                         </button>
                     </div>
                 </div>
