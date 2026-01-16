@@ -2,9 +2,7 @@ import { Service, Professional } from './types';
 
 // Replace this with your actual N8N Webhook URL
 export const N8N_WEBHOOK_URL = 'https://n8n.dimotic.uk/webhook/facheritos';
-
-export const CATEGORIES = ['Todos', 'Cortes', 'Barba', 'Combos', 'Faciales'];
-
+export const CATEGORIES = ['Todos', 'Cortes', 'Barba', 'Combos', 'Faciales', 'Productos'];
 export const SERVICES: Service[] = [
   {
     id: 's1',
@@ -62,6 +60,40 @@ export const SERVICES: Service[] = [
     category: 'Faciales',
     image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1767628575/Macarilla_2_bjtdqv.png',
   },
+  {
+    id: 'prod1',
+    name: 'Cera 4x4',
+    duration: 'Moldea tu estilo sin tanta opacidad', // Usamos el campo duration para la descripción/tallas
+    price: 180,
+    category: 'Productos',
+    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1768572787/CERA_szshi8.png', 
+  },
+  {
+    id: 'prod2',
+    name: 'Pasta 4x4',
+    duration: 'Fija tu estilo y dura todo el día!',
+    price: 180,
+    category: 'Productos',
+    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1768572834/CERA_2_dlxtsg.png',
+  },
+  {
+    id: 'prod3',
+    name: 'Pomada 4x4',
+    duration: 'Dale brillo a tu look',
+    price: 180,
+    category: 'Productos',
+    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1768572794/CERA_1_hbenou.png',
+  },
+];
+
+// 3. Eliminamos a Robert "El Cubito"
+export const PROFESSIONALS: Professional[] = [
+  {
+    id: 'p1',
+    name: 'Manuel Soprano',
+    avatar: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1767629608/manuel-soprano_ptimyv.jpg',
+  },
+];
 ];
 
 export const PROFESSIONALS: Professional[] = [
@@ -69,11 +101,6 @@ export const PROFESSIONALS: Professional[] = [
     id: 'p1',
     name: 'Manuel Soprano',
     avatar: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1767629608/manuel-soprano_ptimyv.jpg',
-  },
-  {
-    id: 'p2',
-    name: 'Robert "El Cubito"',
-    avatar: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1767629809/cubix_jzyffj.jpg',
   },
 ];
 
