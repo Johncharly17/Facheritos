@@ -1,8 +1,10 @@
 import { Service, Professional } from './types';
 
-// Replace this with your actual N8N Webhook URL
+// Webhook de tu Raspberry Pi / n8n
 export const N8N_WEBHOOK_URL = 'https://n8n.dimotic.uk/webhook/facheritos';
+
 export const CATEGORIES = ['Todos', 'Cortes', 'Barba', 'Combos', 'Faciales', 'Productos'];
+
 export const SERVICES: Service[] = [
   {
     id: 's1',
@@ -60,10 +62,11 @@ export const SERVICES: Service[] = [
     category: 'Faciales',
     image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1767628575/Macarilla_2_bjtdqv.png',
   },
+  // --- SECCIÓN DE PRODUCTOS ---
   {
     id: 'prod1',
     name: 'Cera 4x4',
-    duration: 'Moldea tu estilo sin tanta opacidad', // Usamos el campo duration para la descripción/tallas
+    duration: 'Moldea tu estilo sin tanta opacidad',
     price: 180,
     category: 'Productos',
     image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1768572787/CERA_szshi8.png', 
@@ -86,15 +89,7 @@ export const SERVICES: Service[] = [
   },
 ];
 
-// 3. Eliminamos a Robert "El Cubito"
-export const PROFESSIONALS: Professional[] = [
-  {
-    id: 'p1',
-    name: 'Manuel Soprano',
-    avatar: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1767629608/manuel-soprano_ptimyv.jpg',
-  },
-];
-
+// Solo un export de PROFESSIONALS
 export const PROFESSIONALS: Professional[] = [
   {
     id: 'p1',
@@ -111,6 +106,6 @@ export const COMPANY_INFO = {
   address: '📍 Tampico Cañada, México',
   mapsUrl: 'https://maps.app.goo.gl/yyQJp5Y9QSi6R7f68',
   hours: 'Lun - Sáb: 10:00 AM - 8:00 PM',
-  instagram: 'https://www.instagram.com/facheritos_barbershop_?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
+  instagram: 'https://www.instagram.com/facheritos_barbershop_/',
   facebook: 'https://www.facebook.com/profile.php?id=100063746555701',
 };
