@@ -6,7 +6,7 @@ import ServiceList from './components/ServiceList';
 import Footer from './components/Footer';
 import BookingModal from './components/BookingModal';
 import { Service } from './types';
-import { SERVICES, COMPANY_INFO } from './constants'; // VITAL: Asegura estos imports
+import { SERVICES, COMPANY_INFO } from '@/constants';
 import { Facebook } from 'lucide-react';
 
 const App: React.FC = () => {
