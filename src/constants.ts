@@ -94,7 +94,6 @@ export const PROFESSIONALS: Professional[] = [
     avatar: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1767629608/manuel-soprano_ptimyv.jpg',
   },
 ];
-];
 
 export const PROFESSIONALS: Professional[] = [
   {
