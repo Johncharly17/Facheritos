@@ -6,8 +6,8 @@ import ServiceList from './components/ServiceList';
 import Footer from './components/Footer';
 import BookingModal from './components/BookingModal';
 import { Service } from './types';
-import { SERVICES } from './constants';
-import { Facebook, ExternalLink } from 'lucide-react'; // Asegúrate de tener estos
+import { SERVICES, COMPANY_INFO } from './constants'; // VITAL: Asegura estos imports
+import { Facebook } from 'lucide-react';
 
 const App: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Todos');
