@@ -7,7 +7,6 @@ import Footer from './components/Footer';
 import BookingModal from './components/BookingModal';
 import { Service } from './types';
 import { SERVICES, COMPANY_INFO } from '@/constants';
-// CORRECCIÓN: Agregamos Instagram a la importación
 import { Facebook, Instagram } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -37,59 +36,44 @@ const App: React.FC = () => {
       <main className="flex-1 w-full pt-[60px] relative z-0">
         <ShopProfile />
 
-        {/* --- BANNER DINÁMICO V-CIOUS --- */}
-        <section className="max-w-4xl mx-auto px-4 py-12 relative overflow-visible">
-          {/* Etiquetas flotantes "Pop-Up" */}
-          <div className="absolute -top-2 -left-2 z-20 bg-[#A855F7] text-white text-[10px] font-black px-3 py-1 rounded-sm rotate-[-12deg] shadow-lg animate-bounce uppercase tracking-tighter">
-            Coming-Soon
-          </div>
-          <div className="absolute -bottom-2 -right-2 z-20 bg-black text-white text-[10px] font-black px-3 py-1 rounded-sm rotate-[12deg] shadow-lg animate-pulse uppercase tracking-tighter">
-            Solo en Facheritos
-          </div>
-          <div className="absolute top-1/2 -right-4 z-20 hidden md:block bg-white text-black border border-black text-[9px] font-bold px-2 py-1 rounded-sm rotate-90 uppercase tracking-widest shadow-md">
-            NewMerch
-          </div>
-
-          <div className="relative group overflow-hidden rounded-sm bg-black aspect-[16/9] md:aspect-[3/1] shadow-[0_20px_50px_rgba(0,0,0,0.3)] transform transition-all duration-500 hover:scale-[1.02]">
+        {/* --- BANNER MINIMALISTA V-CIOUS --- */}
+        <section className="max-w-4xl mx-auto px-4 py-12">
+          <div className="relative group overflow-hidden rounded-sm bg-black aspect-[16/9] md:aspect-[3/1] shadow-2xl">
+            {/* Imagen de fondo limpia */}
             <img 
               src="https://res.cloudinary.com/dqwslpah7/image/upload/v1768573073/Dise%C3%B1o_sin_t%C3%ADtulo_19_zit9nv.jpg" 
               alt="V-cious Studio" 
-              className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-[2000ms]"
+              className="w-full h-full object-cover opacity-50 transition-opacity duration-500 group-hover:opacity-40"
             />
 
+            {/* Texto Principal con Efecto Neón */}
             <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-6">
-              <h2 className="text-white text-3xl md:text-5xl font-black tracking-tighter mb-2 italic drop-shadow-2xl animate-in fade-in zoom-in duration-700">
-                V-CIOUS
+              <h2 className="text-white text-3xl md:text-6xl font-black tracking-tighter italic animate-neon">
+                ¡Espéralo Pronto!
               </h2>
-              <p className="text-[#A855F7] text-[10px] md:text-xs mb-6 tracking-[0.4em] uppercase font-black bg-white/10 backdrop-blur-sm px-4 py-1 rounded-full">
-                The Merch Edition
+              <p className="text-gray-400 text-[10px] md:text-sm mt-4 tracking-[0.2em] uppercase font-bold">
+                Estilo V-cious solo en Facheritos Barber shop
               </p>
             </div>
 
-            {/* Enlaces Sociales con el link nuevo de V-cious */}
-            <div className="absolute bottom-4 left-4 flex gap-3 z-30">
+            {/* Iconos Sociales en esquinas inferiores */}
+            <div className="absolute bottom-6 left-6 flex gap-4 z-30">
               <a 
                 href="https://www.facebook.com/profile.php?id=61586387832244" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="bg-white/20 backdrop-blur-md p-2 rounded-full text-white hover:bg-[#A855F7] hover:scale-110 transition-all duration-300 border border-white/30 shadow-lg"
+                className="text-white hover:text-[#A855F7] transition-all transform hover:scale-125"
               >
-                <Facebook size={18} />
+                <Facebook size={24} strokeWidth={1.5} />
               </a>
               <a 
                 href={COMPANY_INFO.instagram} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="bg-white/20 backdrop-blur-md p-2 rounded-full text-white hover:bg-[#A855F7] hover:scale-110 transition-all duration-300 border border-white/30 shadow-lg"
+                className="text-white hover:text-[#A855F7] transition-all transform hover:scale-125"
               >
-                <Instagram size={18} />
+                <Instagram size={24} strokeWidth={1.5} />
               </a>
-            </div>
-
-            <div className="absolute bottom-4 right-4">
-                <span className="text-white/40 text-[8px] font-bold uppercase tracking-[0.2em] italic">
-                    Designed by Dimotic
-                </span>
             </div>
           </div>
         </section>
@@ -119,4 +103,5 @@ const App: React.FC = () => {
     </div>
   );
 };
+
 export default App;
