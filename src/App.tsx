@@ -67,7 +67,7 @@ const App: React.FC = () => {
                 <Facebook size={24} strokeWidth={1.5} />
               </a>
               <a 
-                href={COMPANY_INFO.instagram} 
+                href="https://www.instagram.com/vcious.tam/"
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-white hover:text-[#A855F7] transition-all transform hover:scale-125"
