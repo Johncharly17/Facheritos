@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
         </div>
         
         <div className="mt-12 pt-8 border-t border-gray-200 text-center">
-            <p className="text-xs text-gray-400">© {new Date().getFullYear()} Facheritos Barber Shop. Developed with minimalist precision.</p>
+            <p className="text-xs text-gray-400">© {new Date().getFullYear()} DESARROLLADO POR DIMOTIC AUTOMATION.</p>
         </div>
       </div>
     </footer>
