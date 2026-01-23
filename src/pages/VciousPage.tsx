@@ -1,45 +1,122 @@
-// src/pages/VciousPage.tsx
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import CategorySelector from '../components/CategorySelector';
 import { SERVICES } from '@/constants';
-import { ShoppingBag, Zap } from 'lucide-react';
+import { ShoppingBag, Zap, Sparkles, Shirt } from 'lucide-react';
 
 const VciousPage: React.FC = () => {
-  const vciousProducts = SERVICES.filter(s => s.id.startsWith('vc') || s.id.startsWith('prod'));
+  // Definimos las categorías internas de la tienda V-cious
+  const VCIOUS_CATEGORIES = ['Ropa con Estilo', 'Productos de Belleza'];
+  const [selectedCategory, setSelectedCategory] = useState('Ropa con Estilo');
+
   const spotImageUrl = "https://res.cloudinary.com/dqwslpah7/image/upload/v1769099173/spot_real_shxxxz.jpg";
 
+  // Filtramos dinámicamente según la categoría seleccionada
+  const filteredProducts = useMemo(() => {
+    if (selectedCategory === 'Ropa con Estilo') {
+      return SERVICES.filter(s => s.id.startsWith('vc')); // IDs: vc1, vc2...
+    }
+    return SERVICES.filter(s => s.id.startsWith('prod')); // IDs: prod1, prod2...
+  }, [selectedCategory]);
+
   return (
-    <div className="min-h-screen flex flex-col bg-black text-white">
+    <div className="min-h-screen flex flex-col bg-black text-white selection:bg-[#A855F7]">
       <Header />
-      <main className="flex-1 w-full md:ml-64 relative">
-        {/* BACKGROUND: Spot Real con Overlay Púrpura */}
-        <div className="fixed inset-0 z-0">
-          <img src={spotImageUrl} className="w-full h-full object-cover opacity-30 contrast-125" alt="Spot" />
-          <div className="absolute inset-0 bg-gradient-to-tr from-black via-black/80 to-[#A855F7]/10" />
+      
+      <main className="flex-1 w-full md:ml-64 relative overflow-hidden">
+        
+        {/* --- HERO: EL SPOT REAL VISIBLE --- */}
+        <section className="relative h-[40vh] md:h-[50vh] overflow-hidden border-b border-[#A855F7]/30">
+          <img 
+            src={spotImageUrl} 
+            alt="V-cious Underground Spot" 
+            className="w-full h-full object-cover grayscale-[0.3] contrast-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+          <div className="absolute inset-0 flex flex-col justify-center items-center">
+            <h1 className="text-6xl md:text-9xl font-black italic tracking-tighter drop-shadow-[0_0_20px_rgba(168,85,247,0.8)] animate-pulse">
+              V-CIOUS
+            </h1>
+            <div className="bg-black/60 backdrop-blur-md px-4 py-1 border border-[#A855F7]/50 mt-4">
+               <p className="text-[#A855F7] text-[10px] md:text-xs font-black tracking-[0.5em] uppercase">
+                The Spot • Tampico Cañada
+               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* --- SELECTOR DE CATEGORÍA MINIMALISTA --- */}
+        <div className="sticky top-[60px] md:top-0 z-30 bg-black/80 backdrop-blur-lg border-b border-white/5 py-4">
+          <div className="max-w-4xl mx-auto px-6">
+            <div className="flex justify-center gap-8">
+              {VCIOUS_CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
+                    selectedCategory === cat 
+                    ? 'text-[#A855F7] border-b-2 border-[#A855F7] pb-1' 
+                    : 'text-gray-500 hover:text-white'
+                  }`}
+                >
+                  {cat === 'Ropa con Estilo' ? <Shirt size={14} /> : <Sparkles size={14} />}
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="relative z-10 pt-32 px-6">
-          <h1 className="text-7xl md:text-9xl font-black italic text-center tracking-tighter mb-16 drop-shadow-2xl">V-CIOUS</h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto pb-20">
-            {vciousProducts.map((product) => (
-              <div key={product.id} className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-sm shadow-2xl">
-                <div className="aspect-square overflow-hidden mb-6 bg-black">
-                  <img src={product.image} className="w-full h-full object-cover opacity-80" alt={product.name} />
+        {/* --- GALERÍA DE PRODUCTOS --- */}
+        <section className="max-w-6xl mx-auto px-6 py-16 relative">
+          {/* Textura de fondo sutil */}
+          <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
+               style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+            {filteredProducts.map((product) => (
+              <div 
+                key={product.id} 
+                className="group relative bg-[#0a0a0a] border border-white/10 rounded-sm overflow-hidden hover:border-[#A855F7] transition-all duration-500 shadow-2xl"
+              >
+                {/* Imagen con Overlay de Neón al hacer Hover */}
+                <div className="aspect-square overflow-hidden relative">
+                  <div className="absolute inset-0 bg-[#A855F7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+                  <img 
+                    src={product.image} 
+                    alt={product.name} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
                 </div>
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-black italic uppercase">{product.name}</h3>
-                  <span className="text-3xl font-black text-[#A855F7] italic">${product.price}</span>
+
+                <div className="p-8">
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <h3 className="text-2xl font-black uppercase italic tracking-tighter leading-none mb-2">
+                        {product.name}
+                      </h3>
+                      <p className="text-gray-500 text-[10px] uppercase tracking-widest leading-relaxed">
+                        {product.duration}
+                      </p>
+                    </div>
+                    <span className="text-3xl font-black text-[#A855F7] italic">${product.price}</span>
+                  </div>
+
+                  {/* Botón de Pago Automático */}
+                  <button 
+                    onClick={() => window.open('https://www.mercadopago.com.mx/', '_blank')}
+                    className="w-full flex items-center justify-center gap-3 bg-white text-black py-4 font-black uppercase tracking-[0.3em] text-[10px] hover:bg-[#A855F7] hover:text-white transition-all duration-500 shadow-[0_10px_30px_rgba(168,85,247,0.2)]"
+                  >
+                    Asegurar Stock <ShoppingBag size={18} />
+                  </button>
                 </div>
-                <button className="w-full py-4 bg-white text-black font-black uppercase tracking-widest hover:bg-[#A855F7] hover:text-white transition-all">
-                  Asegurar Stock <ShoppingBag size={18} className="inline ml-2" />
-                </button>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       </main>
+
       <Footer />
     </div>
   );
