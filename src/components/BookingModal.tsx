@@ -93,25 +93,32 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
               </div>
             </div>
           )}
+        {step === 'SELECT_SIZE' && (
+  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="text-center">
+      <h3 className="text-xs font-black uppercase tracking-[0.3em] text-[#A855F7] mb-1">
+        Buena elección, te verás cool 🔥
+      </h3>
+      <p className="text-[10px] text-gray-500 uppercase font-bold">Selecciona tu talla para el drop</p>
+    </div>
 
-          {/* PASO: SELECCIÓN DE TALLA (Solo para ropa) */}
-          {step === 'SELECT_SIZE' && (
-            <div className="space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-widest text-gray-400">Selecciona tu Talla:</h3>
-              <div className="grid grid-cols-3 gap-3">
-                {service.sizes?.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => { setSelectedSize(size); setStep('ENTER_DETAILS'); }}
-                    className="py-4 border-2 border-black font-black hover:bg-[#A855F7] hover:border-[#A855F7] hover:text-white transition-all uppercase"
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
+    <div className="grid grid-cols-3 gap-3">
+      {service.sizes?.map((size) => (
+        <button
+          key={size}
+          onClick={() => { setSelectedSize(size); setStep('ENTER_DETAILS'); }}
+          className="group relative h-16 bg-black border border-white/10 overflow-hidden transition-all duration-300 hover:border-[#A855F7] hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]"
+        >
+          {/* Efecto de luz interna al pasar el mouse */}
+          <div className="absolute inset-0 bg-[#A855F7] opacity-0 group-hover:opacity-10 transition-opacity" />
+          <span className="relative z-10 text-white font-black text-xl italic group-hover:text-[#A855F7] transition-colors">
+            {size}
+          </span>
+        </button>
+      ))}
+    </div>
+  </div>
+)}
           {/* ... Aquí irían los pasos de Barbero/Fecha/Hora (se mantienen igual que tu código anterior) ... */}
 
           {/* PASO FINAL: DATOS */}
