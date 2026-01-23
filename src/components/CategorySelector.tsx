@@ -1,17 +1,21 @@
 import React from 'react';
-import { CATEGORIES } from '../constants';
 
 interface CategorySelectorProps {
+  categories: string[]; // Nueva prop para recibir la lista dinámica
   selectedCategory: string;
   onSelectCategory: (category: string) => void;
 }
 
-const CategorySelector: React.FC<CategorySelectorProps> = ({ selectedCategory, onSelectCategory }) => {
+const CategorySelector: React.FC<CategorySelectorProps> = ({ 
+  categories, 
+  selectedCategory, 
+  onSelectCategory 
+}) => {
   return (
     <div className="sticky top-[60px] md:top-[72px] bg-white z-30 py-4 border-b border-gray-50 shadow-sm">
       <div className="max-w-4xl mx-auto px-4">
         <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-1">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => onSelectCategory(cat)}
