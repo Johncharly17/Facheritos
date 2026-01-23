@@ -1,10 +1,12 @@
 export interface Service {
   id: string;
   name: string;
-  duration: string; // e.g., "45 min"
+  duration: string;
   price: number;
-  category: 'Cortes' | 'Barba' | 'Combos' | 'Faciales';
+  category: 'Cortes' | 'Barba' | 'Combos' | 'Faciales' | 'Productos'; // Añadido Productos
   image: string;
+  sizes?: string[]; // Cambiado a array para manejar varias tallas (M, L, XL)
+  mpLink?: string;  // El link de Checkout Pro de Mercado Pago
 }
 
 export interface Professional {
@@ -13,20 +15,17 @@ export interface Professional {
   avatar: string;
 }
 
-export interface TimeSlot {
-  time: string;
-  available: boolean;
-}
-
 export interface BookingPayload {
   nombre_cliente: string;
   telefono_cliente: string;
   servicio_id: string;
   servicio_nombre: string;
   precio: number;
-  fecha_hora: string; // ISO string or formatted string
+  fecha_hora: string;
   barbero_id: string;
+  talla?: string; // Nuevo: Para saber qué talla compraron
   source: 'web';
 }
 
-export type BookingStep = 'SELECT_PROFESSIONAL' | 'SELECT_DATE' | 'SELECT_TIME' | 'ENTER_DETAILS' | 'CONFIRMATION';
+// Añadido 'SELECT_SIZE' al flujo
+export type BookingStep = 'SELECT_PROFESSIONAL' | 'SELECT_DATE' | 'SELECT_TIME' | 'SELECT_SIZE' | 'ENTER_DETAILS' | 'CONFIRMATION';
