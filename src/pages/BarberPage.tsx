@@ -11,16 +11,17 @@ import { SERVICES, COMPANY_INFO } from '@/constants';
 import { Facebook, Instagram } from 'lucide-react';
 
 // CORRECCIÓN: Renombramos el componente a BarberPage
+const BARBER_CATEGORIES = ['Todos', 'Cortes', 'Combos', 'Barba', 'Faciales']; // Quitamos "Productos"
+
 const BarberPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('Todos');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
-
+  
   const filteredServices = useMemo(() => {
-    if (selectedCategory === 'Todos') return SERVICES;
-    return SERVICES.filter((s) => s.category === selectedCategory);
+    // Solo mostramos servicios que NO sean de la categoría Productos
+    const baseServices = SERVICES.filter(s => s.category !== 'Productos'); 
+    if (selectedCategory === 'Todos') return baseServices;
+    return baseServices.filter((s) => s.category === selectedCategory);
   }, [selectedCategory]);
-
   const handleBook = (service: Service) => {
     setSelectedService(service);
     setIsModalOpen(true);
