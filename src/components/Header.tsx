@@ -1,60 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import { Instagram, Facebook } from 'lucide-react';
+import React from 'react';
+import { Instagram, Facebook, LayoutGrid } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { COMPANY_INFO } from '../constants';
 
 const Header: React.FC = () => {
-  const [scrolled, setScrolled] = useState(false);
-
-  // El link de Cloudinary que usas en n8n
-  const logoUrl = "https://res.cloudinary.com/dqwslpah7/image/upload/v1767630935/logo_jlydai.jpg";
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  // Imagen de tu spot neón con las playeras V-cious
+  const spotImageUrl = "https://res.cloudinary.com/dqwslpah7/image/upload/v1769099173/spot_real_shxxxz.jpg";
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        scrolled ? 'bg-white/95 backdrop-blur-sm border-b border-gray-100 py-2' : 'bg-transparent py-4'
-      }`}
-    >
-      <div className="max-w-4xl mx-auto px-4 flex justify-between items-center">
-        {/* Logo Area */}
-        <div className="flex items-center gap-3">
-            <div className={`overflow-hidden rounded-full border-2 border-black transition-all duration-300 ${scrolled ? 'h-10 w-10' : 'h-12 w-12'}`}>
-              <img 
-                src={logoUrl} 
-                alt="Logo Facheritos" 
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <span className={`font-bold tracking-tighter text-xl transition-colors duration-300 ${scrolled ? 'text-black' : 'text-black'}`}>
-                FACHERITOS
-            </span>
+    <header className="fixed top-0 left-0 h-screen w-0 md:w-64 bg-black z-50 overflow-hidden border-r border-white/10 hidden md:flex flex-col">
+      {/* Fondo con la imagen del spot */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src={spotImageUrl} 
+          alt="V-cious Spot" 
+          className="h-full w-full object-cover opacity-60"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/90" />
+      </div>
+
+      {/* Contenido del Sidebar */}
+      <div className="relative z-10 flex flex-col h-full p-6 justify-between">
+        {/* Logo y Título */}
+        <div>
+          <h1 className="text-white font-black text-3xl tracking-tighter italic leading-none mb-2">
+            V-CIOUS
+          </h1>
+          <p className="text-[#A855F7] text-[10px] font-bold uppercase tracking-widest">
+            Urban Racing Spot
+          </p>
         </div>
 
-        {/* Social Icons */}
-        <div className="flex items-center gap-4">
-          <a 
-            href={COMPANY_INFO.instagram} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-black hover:text-[#A855F7] transition-all duration-300 hover:scale-110"
+        {/* Botón Central de Navegación */}
+        <div className="flex flex-col gap-4">
+          <Link 
+            to="/v-cious" 
+            className="group relative flex items-center justify-center gap-2 bg-white text-black font-bold py-4 px-2 rounded-sm text-xs uppercase tracking-widest hover:bg-[#A855F7] hover:text-white transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
           >
-            <Instagram size={22} strokeWidth={1.5} />
-          </a>
-          <a 
-            href={COMPANY_INFO.facebook} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-black hover:text-[#A855F7] transition-all duration-300 hover:scale-110"
-          >
-            <Facebook size={22} strokeWidth={1.5} />
-          </a>
+            <LayoutGrid size={16} className="group-hover:rotate-90 transition-transform duration-500" />
+            Ver Productos Vicious
+          </Link>
+          <p className="text-gray-400 text-[9px] text-center uppercase tracking-tighter italic">
+            Merch exclusiva en Facheritos
+          </p>
+        </div>
+
+        {/* Redes Sociales y Ubicación */}
+        <div className="space-y-6">
+          <div className="flex justify-center gap-6">
+            <a 
+              href="https://www.facebook.com/profile.php?id=61586387832244" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-white hover:text-[#A855F7] transform hover:scale-125 transition-all"
+            >
+              <Facebook size={24} strokeWidth={1.5} />
+            </a>
+            <a 
+              href="https://www.instagram.com/vcious.tam/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-white hover:text-[#A855F7] transform hover:scale-125 transition-all"
+            >
+              <Instagram size={24} strokeWidth={1.5} />
+            </a>
+          </div>
+          
+          <div className="pt-6 border-t border-white/10">
+            <p className="text-white/40 text-[8px] font-bold uppercase tracking-[0.2em] text-center">
+              Tampico Cañada, MX
+            </p>
+          </div>
         </div>
       </div>
     </header>
