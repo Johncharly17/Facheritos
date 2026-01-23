@@ -106,8 +106,7 @@ export const SERVICES: Service[] = [
     image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1769182385/MCLAREN_tfj5kh.jpg',
     sizes: ['M', 'L', 'XL'],
     mpLink: 'https://mpago.la/tu-link-mclaren'
-  }
-];
+  },
 ];
 
 // Solo un export de PROFESSIONALS
