@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import Header from './components/Header';
-import ShopProfile from './components/ShopProfile';
-import CategorySelector from './components/CategorySelector';
-import ServiceList from './components/ServiceList';
-import Footer from './components/Footer';
-import BookingModal from './components/BookingModal';
-import { Service } from './types';
+import Header from '../components/Header';
+import ShopProfile from '../components/ShopProfile';
+import CategorySelector from '../components/CategorySelector';
+import ServiceList from '../components/ServiceList';
+import Footer from '../components/Footer';
+import BookingModal from '../components/BookingModal';
+import { Service } from '../types';
 import { SERVICES, COMPANY_INFO } from '@/constants';
 import { Facebook, Instagram } from 'lucide-react';
 
