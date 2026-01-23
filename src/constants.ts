@@ -87,6 +87,22 @@ export const SERVICES: Service[] = [
     category: 'Productos',
     image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1768572794/CERA_1_hbenou.png',
   },
+  {
+    id: 'vc1',
+    name: 'Playera Mazda RX-7',
+    duration: 'Talla: M, L, XL ',
+    price: 200,
+    category: 'Productos',
+    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1769182385/MAZDA_RZ-7_c1r4fo.jpg', // Usa el link de Cloudinary de la foto que me pasaste
+  },
+  {
+    id: 'vc2',
+    name: 'Playera McLaren 720S',
+    duration: 'Talla: M, L, XL ',
+    price: 200,
+    category: 'Productos',
+    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1769182385/MCLAREN_tfj5kh.jpg',
+  },
 ];
 
 // Solo un export de PROFESSIONALS
