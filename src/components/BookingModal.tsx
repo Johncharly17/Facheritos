@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle, ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
+import { X, CheckCircle, ChevronLeft, ChevronRight, ShoppingBag, CreditCard, Landmark } from 'lucide-react';
 import { Service, Professional, BookingStep, BookingPayload } from '../types';
-// Importamos los datos reales de tus constantes
 import { PROFESSIONALS, TIME_SLOTS, N8N_WEBHOOK_URL } from '../constants';
 
 interface BookingModalProps {
@@ -27,32 +26,34 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
     return d;
   });
 
-  // Lógica de inicio del Modal
+  // Cálculo de comisión Mercado Pago (3.5%)
+  const mpFee = 1.035;
+  const finalPriceMP = Math.round(service.price * mpFee);
+
   useEffect(() => {
     if (isOpen) {
       if (service.category === 'Productos') {
-        // Si es ropa (tiene tallas), va a SELECT_SIZE; si es cera, va a ENTER_DETAILS
         setStep(service.sizes ? 'SELECT_SIZE' : 'ENTER_DETAILS');
       } else {
-        // Si es corte/barba, iniciamos con el Barbero
         setStep('SELECT_PROFESSIONAL');
       }
       setName('');
       setPhone('');
+      setSelectedSize(null);
     }
   }, [isOpen, service]);
 
-  const handleBook = async () => {
-    setIsSubmitting(true);
+  const handlePayloadSend = async (method?: string, price?: number) => {
     const payload: BookingPayload = {
       nombre_cliente: name,
       telefono_cliente: phone,
       servicio_id: service.id,
       servicio_nombre: service.name,
-      precio: service.price,
+      precio: price || service.price,
       talla: selectedSize || 'N/A',
       fecha_hora: service.category === 'Productos' ? 'VENTA-INMEDIATA' : `${selectedDate} ${selectedTime}`,
       barbero_id: service.category === 'Productos' ? 'V-CIOUS-SPOT' : (selectedPro?.id || 'P1'),
+      metodo_pago: method || 'Pendiente',
       source: 'web',
     };
 
@@ -62,17 +63,23 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
-      if (service.category === 'Productos' && service.mpLink) {
-        window.location.href = service.mpLink;
-        return;
-      }
-      setStep('CONFIRMATION');
     } catch (error) {
-      setStep('CONFIRMATION');
-    } finally {
-      setIsSubmitting(false);
+      console.error("Error enviando a n8n:", error);
     }
+  };
+
+  const processPayment = async (method: 'MercadoPago' | 'Transferencia') => {
+    setIsSubmitting(true);
+    const finalPrice = method === 'MercadoPago' ? finalPriceMP : service.price;
+    
+    await handlePayloadSend(method, finalPrice);
+
+    if (method === 'MercadoPago' && service.mpLink) {
+      window.location.href = service.mpLink;
+    } else {
+      setStep('SHOW_BBVA_DATA');
+    }
+    setIsSubmitting(false);
   };
 
   if (!isOpen) return null;
@@ -83,11 +90,10 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
       
-      <div className={`relative w-full max-w-md shadow-2xl flex flex-col max-h-[90vh] z-[110] rounded-sm ${
-        isVcious ? 'bg-[#111] text-white' : 'bg-white text-black'
+      <div className={`relative w-full max-w-md shadow-2xl flex flex-col max-h-[90vh] z-[110] rounded-sm transition-colors duration-500 ${
+        isVcious ? 'bg-[#0a0a0a] text-white border border-[#A855F7]/30' : 'bg-white text-black'
       }`}>
         
-        {/* Header del Modal */}
         <div className={`flex justify-between items-center p-6 border-b ${isVcious ? 'border-white/10' : 'border-gray-100'}`}>
           <h2 className="text-xl font-bold tracking-tight uppercase italic">
             {isVcious ? 'V-cious Store' : 'Agendar en Facheritos'}
@@ -96,8 +102,8 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {/* Resumen */}
-          {step !== 'CONFIRMATION' && (
+          {/* Resumen del Item */}
+          {step !== 'CONFIRMATION' && step !== 'SHOW_BBVA_DATA' && (
             <div className={`mb-6 p-4 border-l-2 border-[#A855F7] flex gap-4 items-center ${isVcious ? 'bg-white/5' : 'bg-gray-50'}`}>
               <img src={service.image} className="w-14 h-14 object-cover rounded-sm" alt="Thumbnail" />
               <div>
@@ -107,7 +113,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
             </div>
           )}
 
-          {/* PASO 1: SELECCIONAR BARBERO */}
+          {/* PASO: SELECCIONAR BARBERO */}
           {step === 'SELECT_PROFESSIONAL' && (
             <div className="space-y-4">
               <h3 className="text-sm font-black uppercase tracking-widest text-gray-400 mb-4">¿Quién te atiende?</h3>
@@ -120,7 +126,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
                   <img src={pro.avatar} alt={pro.name} className="w-12 h-12 rounded-full object-cover" />
                   <div className="text-left">
                     <p className="font-bold">{pro.name}</p>
-                    <p className="text-xs text-gray-400">Barbero Profesional</p>
+                    <p className="text-xs text-gray-400 font-medium">Barbero Profesional</p>
                   </div>
                   <ChevronRight className="ml-auto text-gray-300 group-hover:text-black" size={20} />
                 </button>
@@ -128,7 +134,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
             </div>
           )}
 
-          {/* PASO 2: SELECCIONAR FECHA */}
+          {/* PASO: SELECCIONAR FECHA */}
           {step === 'SELECT_DATE' && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
@@ -153,7 +159,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
             </div>
           )}
 
-          {/* PASO 3: SELECCIONAR HORA */}
+          {/* PASO: SELECCIONAR HORA */}
           {step === 'SELECT_TIME' && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
@@ -165,7 +171,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
                   <button
                     key={time}
                     onClick={() => { setSelectedTime(time); setStep('ENTER_DETAILS'); }}
-                    className="py-3 border rounded-sm text-sm font-bold hover:bg-black hover:text-white"
+                    className="py-3 border rounded-sm text-sm font-bold hover:bg-black hover:text-white transition-all"
                   >
                     {time}
                   </button>
@@ -174,16 +180,16 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
             </div>
           )}
 
-          {/* PASO: SELECCIONAR TALLA (Sólo V-cious) */}
+          {/* PASO: SELECCIONAR TALLA (Toque Neón) */}
           {step === 'SELECT_SIZE' && (
-            <div className="space-y-6 text-center">
-              <h3 className="text-sm font-black uppercase tracking-[0.3em] text-[#A855F7]">Buena elección, te verás cool 🔥</h3>
+            <div className="space-y-6 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-[#A855F7]">Buena elección, te verás cool 🔥</h3>
               <div className="grid grid-cols-3 gap-4">
                 {service.sizes?.map((size) => (
                   <button
                     key={size}
                     onClick={() => { setSelectedSize(size); setStep('ENTER_DETAILS'); }}
-                    className="py-5 bg-black border-2 border-[#A855F7]/30 hover:border-[#A855F7] rounded-sm font-black text-white"
+                    className="py-5 bg-black border-2 border-[#A855F7]/30 hover:border-[#A855F7] rounded-sm font-black text-white shadow-[0_0_15px_rgba(168,85,247,0.2)] transition-all"
                   >
                     {size}
                   </button>
@@ -192,46 +198,109 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
             </div>
           )}
 
-          {/* PASO FINAL: DATOS (Visibilidad corregida) */}
+          {/* PASO: DATOS (Inputs con visibilidad corregida) */}
           {step === 'ENTER_DETAILS' && (
             <div className="space-y-6">
-              <h3 className={`font-black italic ${isVcious ? 'text-[#A855F7]' : 'text-black'}`}>Casi listo...</h3>
+              <h3 className={`font-black italic ${isVcious ? 'text-[#A855F7]' : 'text-black'}`}>Tus datos de contacto</h3>
               <div className="space-y-4">
                 <input 
                   type="text" 
-                  placeholder="Tu Nombre" 
+                  placeholder="Tu Nombre Completo" 
                   value={name} 
                   onChange={e => setName(e.target.value)} 
                   className={`w-full py-3 border-b outline-none focus:border-[#A855F7] font-medium bg-transparent ${isVcious ? 'text-white' : 'text-black'}`} 
                 />
                 <input 
                   type="tel" 
-                  placeholder="WhatsApp" 
+                  placeholder="WhatsApp (10 dígitos)" 
                   value={phone} 
                   onChange={e => setPhone(e.target.value)} 
                   className={`w-full py-3 border-b outline-none focus:border-[#A855F7] font-medium bg-transparent ${isVcious ? 'text-white' : 'text-black'}`} 
                 />
               </div>
               <button 
-                onClick={handleBook}
+                onClick={() => isVcious ? setStep('SELECT_PAYMENT_METHOD') : handleBook()}
                 disabled={!name || !phone || isSubmitting}
-                className={`w-full py-4 font-black uppercase tracking-widest flex items-center justify-center gap-2 ${
+                className={`w-full py-4 font-black uppercase tracking-widest transition-all ${
                   isVcious ? 'bg-[#A855F7] text-white hover:bg-white hover:text-black' : 'bg-black text-white hover:bg-[#A855F7]'
                 } disabled:opacity-50`}
               >
-                {isSubmitting ? 'Procesando...' : (isVcious ? 'Pagar Ahora' : 'Confirmar Cita')}
-                {isVcious && <ShoppingBag size={18} />}
+                {isSubmitting ? 'Procesando...' : (isVcious ? 'Siguiente' : 'Confirmar Cita')}
+              </button>
+            </div>
+          )}
+
+          {/* PASO: MÉTODOS DE PAGO (Doble opción) */}
+          {step === 'SELECT_PAYMENT_METHOD' && (
+            <div className="space-y-4">
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[#A855F7] text-center mb-6">Elige tu forma de pago</h3>
+              
+              <button 
+                onClick={() => processPayment('MercadoPago')}
+                className="w-full flex items-center justify-between p-5 border border-white/10 bg-white/5 hover:bg-[#A855F7] group transition-all"
+              >
+                <div className="text-left">
+                  <p className="font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+                    <CreditCard size={14} /> Tarjeta / Mercado Pago
+                  </p>
+                  <p className="text-[9px] opacity-60 mt-1">Total con comisión (3.5%): ${finalPriceMP}</p>
+                </div>
+                <ChevronRight size={18} />
+              </button>
+
+              <button 
+                onClick={() => processPayment('Transferencia')}
+                className="w-full flex items-center justify-between p-5 border-2 border-white hover:bg-white hover:text-black transition-all"
+              >
+                <div className="text-left">
+                  <p className="font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+                    <Landmark size={14} /> Transferencia BBVA
+                  </p>
+                  <p className="text-[9px] opacity-60 mt-1">Precio Original: ${service.price}</p>
+                </div>
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          )}
+
+          {/* PASO: DATOS TRANSFERENCIA BBVA */}
+          {step === 'SHOW_BBVA_DATA' && (
+            <div className="space-y-6 text-center animate-in zoom-in duration-300">
+              <div className="p-6 bg-white/5 border border-[#A855F7]/30 rounded-sm">
+                <p className="text-[10px] font-black uppercase text-[#A855F7] mb-4 tracking-widest flex items-center justify-center gap-2">
+                   <Landmark size={14} /> Cuenta BBVA México
+                </p>
+                <div className="space-y-2 text-sm font-mono">
+                  <p className="flex justify-between border-b border-white/5 pb-1"><span className="opacity-40 uppercase text-[10px]">Tarjeta:</span> 4152 3144 3526 8290</p>
+                  <p className="flex justify-between border-b border-white/5 pb-1"><span className="opacity-40 uppercase text-[10px]">Nombre:</span> Juan Carlos D</p>
+                  <p className="flex justify-between border-b border-white/5 pb-1"><span className="opacity-40 uppercase text-[10px]">Monto:</span> ${service.price}</p>
+                  <p className="flex justify-between"><span className="opacity-40 uppercase text-[10px]">Concepto:</span> {service.name}</p>
+                </div>
+              </div>
+
+              <div className="p-4 border border-yellow-500/50 bg-yellow-500/5">
+                <p className="text-[9px] font-black text-yellow-500 uppercase tracking-widest mb-1">⚠️ IMPORTANTE</p>
+                <p className="text-[10px] italic leading-tight text-gray-400">
+                   Debes mostrar la captura de pantalla de tu transferencia al barbero **Manuel Soprano** para la entrega.
+                </p>
+              </div>
+
+              <button 
+                onClick={() => setStep('CONFIRMATION')}
+                className="w-full py-4 bg-white text-black font-black uppercase text-xs tracking-[0.3em]"
+              >
+                Ya hice mi transferencia
               </button>
             </div>
           )}
 
           {/* ÉXITO */}
           {step === 'CONFIRMATION' && (
-            <div className="text-center py-10">
+            <div className="text-center py-10 animate-in fade-in zoom-in">
               <CheckCircle className="mx-auto text-[#A855F7] mb-4" size={60} />
-              <h2 className="text-2xl font-bold">¡Todo listo!</h2>
-              <p className="text-gray-500 text-sm mt-2">Te contactaremos por WhatsApp para confirmar.</p>
-              <button onClick={onClose} className="mt-8 font-bold underline">Cerrar</button>
+              <h2 className={`text-2xl font-bold italic ${isVcious ? 'text-white' : 'text-black'}`}>¡Listo!</h2>
+              <p className="text-gray-500 text-sm mt-2">El Fachebot registró tu solicitud.</p>
+              <button onClick={onClose} className="mt-8 font-bold underline decoration-[#A855F7] underline-offset-4">Cerrar</button>
             </div>
           )}
         </div>
