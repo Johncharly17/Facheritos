@@ -9,14 +9,15 @@ import { Service } from '../types';
 import { SERVICES, COMPANY_INFO } from '@/constants';
 import { Facebook, Instagram } from 'lucide-react';
 
-// src/pages/BarberPage.tsx
 const BARBER_CATEGORIES = ['Cortes', 'Combos', 'Barba', 'Faciales'];
 
 const BarberPage: React.FC = () => {
-  // CORRECCIÓN: Un solo valor inicial
   const [selectedCategory, setSelectedCategory] = useState('Cortes');
   
-  // Filtro para que solo aparezcan servicios de barbería
+  // VITAL: Agregamos los estados que faltaban para que los botones reaccionen
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+
   const filteredServices = useMemo(() => {
     const onlyBarber = SERVICES.filter(s => s.category !== 'Productos');
     return onlyBarber.filter((s) => s.category === selectedCategory);
@@ -47,6 +48,15 @@ const BarberPage: React.FC = () => {
         </div>
       </main>
       <Footer />
+
+      {/* VITAL: Debes renderizar el Modal aquí para que se muestre al dar click */}
+      {selectedService && (
+        <BookingModal 
+          service={selectedService}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };
