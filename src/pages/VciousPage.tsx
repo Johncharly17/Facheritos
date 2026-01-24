@@ -42,12 +42,12 @@ const VciousPage: React.FC = () => {
       <main className="flex-1 w-full md:ml-64 relative overflow-hidden">
         
         {/* --- BOTÓN VOLVER A FACHERITOS (Minimalista y elegante) --- */}
-        <div className="absolute top-6 left-6 z-40">
+        <div className="fixed top-[75px] left-4 md:top-8 md:left-8 z-[60]">
           <Link 
             to="/" 
-            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 hover:bg-[#A855F7] hover:border-[#A855F7] transition-all duration-300 rounded-sm"
+            className="flex items-center gap-2 text-[9px] md:text-[11px] font-black uppercase tracking-[0.2em] bg-[#A855F7] text-white px-5 py-3 rounded-full shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:scale-105 active:scale-95 transition-all"
           >
-            <ChevronLeft size={14} /> Volver a Barbería
+            <ChevronLeft size={16} strokeWidth={3} /> Volver a Barbería
           </Link>
         </div>
 
@@ -65,7 +65,7 @@ const VciousPage: React.FC = () => {
             </h1>
             <div className="bg-black/60 backdrop-blur-md px-4 py-1 border border-[#A855F7]/50 mt-4">
                <p className="text-[#A855F7] text-[10px] md:text-xs font-black tracking-[0.5em] uppercase">
-                The Spot • Tampico Cañada
+                Urban Racing & Abstract Style 
                </p>
             </div>
           </div>
