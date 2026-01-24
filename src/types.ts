@@ -8,13 +8,11 @@ export interface Service {
   sizes?: string[]; // Cambiado a array para manejar varias tallas (M, L, XL)
   mpLink?: string;  // El link de Checkout Pro de Mercado Pago
 }
-
 export interface Professional {
   id: string;
   name: string;
   avatar: string;
 }
-
 export interface BookingPayload {
   nombre_cliente: string;
   telefono_cliente: string;
@@ -25,7 +23,9 @@ export interface BookingPayload {
   barbero_id: string;
   talla?: string; // Nuevo: Para saber qué talla compraron
   source: 'web';
+  metodo_pago?: 'MercadoPago' | 'Transferencia';
+  precio_final: number;
 }
 
 // Añadido 'SELECT_SIZE' al flujo
-export type BookingStep = 'SELECT_PROFESSIONAL' | 'SELECT_DATE' | 'SELECT_TIME' | 'SELECT_SIZE' | 'ENTER_DETAILS' | 'CONFIRMATION';
+export type BookingStep = 'SELECT_PROFESSIONAL' | 'SELECT_DATE' | 'SELECT_TIME' | 'SELECT_SIZE' | 'ENTER_DETAILS' | 'SELECT_PAYMENT_METHOD' | 'SHOW_BBVA_DATA' | 'CONFIRMATION';
