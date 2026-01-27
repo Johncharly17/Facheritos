@@ -16,14 +16,6 @@ export const SERVICES: Service[] = [
   },
   {
     id: 's2',
-    name: 'Fade / Degradado',
-    duration: 'Técnica de desvanecido preciso que resalta las facciones y da un estilo moderno.',
-    price: 250,
-    category: 'Cortes',
-    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1765406174/ee954490-c9ef-467e-b910-a1c18db59335.png',
-  },
-  {
-    id: 's3',
     name: 'Perfilado de Barba',
     duration: 'Definición de líneas con navaja para una barba simétrica y bien cuidada.',
     price: 100,
@@ -31,36 +23,12 @@ export const SERVICES: Service[] = [
     image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1765406114/ec5c2f9c-4cf4-42b6-9816-ce378c3a0a38.png',
   },
   {
-    id: 's4',
-    name: 'Barba con Toalla Caliente',
-    duration: 'Experiencia relajante que abre los poros para un afeitado suave y sin irritación.',
-    price: 150,
-    category: 'Barba',
-    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1765406089/9d2a96d9-0d5a-4cf9-bf13-f35d687e4966.png',
-  },
-  {
-    id: 's5',
-    name: 'Combo Corte + Barba',
-    duration: 'Renovación total de imagen combinando nuestro mejor corte y cuidado de barba.',
-    price: 300,
-    category: 'Combos',
-    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1765406165/7801e549-2c32-471d-b259-f5c1099f1636.png',
-  },
-  {
-    id: 's6',
+    id: 's3',
     name: 'Facial Exfoliante',
     duration: 'Limpieza profunda que elimina células muertas y deja la piel fresca y renovada.',
-    price: 200,
+    price: 250,
     category: 'Faciales',
     image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1766326408/Captura_de_pantalla_2025-12-21_081105_i9oqta.png',
-  },
-  {
-    id: 's7',
-    name: 'Black Mask Deluxe',
-    duration: 'Mascarilla purificante que extrae impurezas y puntos negros para un cutis liso.',
-    price: 300,
-    category: 'Faciales',
-    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1767628575/Macarilla_2_bjtdqv.png',
   },
   // --- SECCIÓN DE PRODUCTOS ---
   {
@@ -113,7 +81,7 @@ export const SERVICES: Service[] = [
 export const PROFESSIONALS: Professional[] = [
   {
     id: 'p1',
-    name: 'Manuel Soprano',
+    name: 'Mr. Facherito',
     avatar: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1767629608/manuel-soprano_ptimyv.jpg',
   },
 ];
