@@ -93,7 +93,7 @@ export const TIME_SLOTS = [
 export const COMPANY_INFO = {
   address: '📍 Tampico Cañada, México',
   mapsUrl: 'https://maps.app.goo.gl/yyQJp5Y9QSi6R7f68',
-  hours: 'Lun - Sáb: 10:00 AM - 8:00 PM',
+  hours: 'Lun - Sáb: 1:00 PM - 6:00 PM',
   instagram: 'https://www.instagram.com/facheritos_barbershop_/',
   facebook: 'https://www.facebook.com/profile.php?id=100063746555701',
 };
