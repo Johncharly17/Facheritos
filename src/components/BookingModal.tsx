@@ -31,7 +31,6 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
   useEffect(() => {
     if (isOpen) {
       if (service.category === 'Productos') {
-        // Inicia en Talla si es ropa, si no va directo a Datos
         setStep(service.sizes ? 'SELECT_SIZE' : 'ENTER_DETAILS');
       } else {
         setStep('SELECT_PROFESSIONAL');
@@ -39,10 +38,11 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
       setName('');
       setPhone('');
       setSelectedSize(null);
+      setSelectedDate(null);
+      setSelectedTime(null);
     }
   }, [isOpen, service]);
 
-  // FUNCIÓN CENTRAL DEL WEBHOOK (n8n)
   const handlePayloadSend = async (method?: string, price?: number) => {
     const payload: BookingPayload = {
       nombre_cliente: name,
@@ -53,6 +53,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
       talla: selectedSize || 'N/A',
       fecha_hora: service.category === 'Productos' ? 'VENTA-WEB-PRODUCTO' : `${selectedDate} ${selectedTime}`,
       barbero_id: service.category === 'Productos' ? 'V-CIOUS-SPOT' : (selectedPro?.id || 'P1'),
+      metodo_pago: method || 'Cita Presencial',
       source: 'web',
     };
 
@@ -67,23 +68,18 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
     }
   };
 
-  // Acción para Citas de Barbería
-  const handleBarberBooking = async () => {
+  const handleBook = async () => {
     setIsSubmitting(true);
-    await handlePayloadSend('Cita Pendiente');
+    await handlePayloadSend('Cita Agendada', service.price);
     setStep('CONFIRMATION');
     setIsSubmitting(false);
   };
 
-  // Acción para Ventas V-cious (Híbrido MP/BBVA)
-  const handleProductPurchase = async (method: 'MercadoPago' | 'Transferencia') => {
+  const processPayment = async (method: 'MercadoPago' | 'Transferencia') => {
     setIsSubmitting(true);
     const finalPrice = method === 'MercadoPago' ? finalPriceMP : service.price;
-    
-    // 1. Mandamos el webhook a n8n con el método elegido
     await handlePayloadSend(method, finalPrice);
 
-    // 2. Ejecutamos la acción de pago
     if (method === 'MercadoPago' && service.mpLink) {
       window.location.href = service.mpLink;
     } else {
@@ -99,25 +95,80 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
       
-      <div className={`relative w-full max-w-md shadow-2xl flex flex-col max-h-[90vh] z-[110] rounded-sm ${
+      <div className={`relative w-full max-w-md shadow-2xl flex flex-col max-h-[90vh] z-[110] rounded-sm transition-colors duration-500 ${
         isVcious ? 'bg-[#0a0a0a] text-white border border-[#A855F7]/30' : 'bg-white text-black'
       }`}>
         
         <div className={`flex justify-between items-center p-6 border-b ${isVcious ? 'border-white/10' : 'border-gray-100'}`}>
-          <h2 className="text-xl font-bold tracking-tight uppercase italic">
-            {isVcious ? 'V-cious Store' : 'Agendar Cita'}
-          </h2>
+          <h2 className="text-xl font-bold tracking-tight uppercase italic">{isVcious ? 'V-cious Store' : 'Agendar Cita'}</h2>
           <button onClick={onClose} className="p-1 hover:opacity-50"><X size={24} /></button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {/* PASO: SELECCIONAR TALLA */}
+          {step !== 'CONFIRMATION' && step !== 'SHOW_BBVA_DATA' && (
+            <div className={`mb-6 p-4 border-l-2 border-[#A855F7] flex gap-4 items-center ${isVcious ? 'bg-white/5' : 'bg-gray-50'}`}>
+              <img src={service.image} className="w-14 h-14 object-cover rounded-sm" alt="Thumbnail" />
+              <div>
+                <p className="font-black text-sm uppercase italic leading-none">{service.name}</p>
+                <p className="text-lg font-black text-[#A855F7]">${service.price}</p>
+              </div>
+            </div>
+          )}
+
+          {/* PASO: SELECCIONAR BARBERO (Facheritos) */}
+          {step === 'SELECT_PROFESSIONAL' && (
+            <div className="space-y-4">
+              <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">¿Quién te atiende?</h3>
+              {PROFESSIONALS.map((pro) => (
+                <button key={pro.id} onClick={() => { setSelectedPro(pro); setStep('SELECT_DATE'); }} className="w-full flex items-center gap-4 p-4 border border-gray-100 rounded-sm hover:border-black transition-all group">
+                  <img src={pro.avatar} alt={pro.name} className="w-12 h-12 rounded-full object-cover" />
+                  <div className="text-left"><p className="font-bold">{pro.name}</p><p className="text-xs text-gray-400">Barbero Profesional</p></div>
+                  <ChevronRight className="ml-auto text-gray-300 group-hover:text-black transition-colors" size={20} />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* PASO: SELECCIONAR DÍA (Facheritos) */}
+          {step === 'SELECT_DATE' && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <button onClick={() => setStep('SELECT_PROFESSIONAL')} className="text-gray-400 hover:text-black transition-colors"><ChevronLeft size={20}/></button>
+                <h3 className="font-bold italic">Selecciona el día</h3>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {nextDays.map((date) => (
+                  <button key={date.toISOString()} onClick={() => { setSelectedDate(date.toISOString().split('T')[0]); setStep('SELECT_TIME'); }} className="p-3 border rounded-sm text-center hover:border-[#A855F7]">
+                    <span className="block capitalize font-bold text-xs">{date.toLocaleDateString('es-MX', { weekday: 'short' })}</span>
+                    <span className="block text-xs font-black">{date.getDate()}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* PASO: SELECCIONAR HORA (Facheritos) */}
+          {step === 'SELECT_TIME' && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <button onClick={() => setStep('SELECT_DATE')} className="text-gray-400 hover:text-black transition-colors"><ChevronLeft size={20}/></button>
+                <h3 className="font-bold italic">¿A qué hora?</h3>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {TIME_SLOTS.map((time) => (
+                  <button key={time} onClick={() => { setSelectedTime(time); setStep('ENTER_DETAILS'); }} className="py-3 border rounded-sm text-sm font-bold hover:bg-black hover:text-white transition-all">{time}</button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* PASO: SELECCIONAR TALLA (V-cious) */}
           {step === 'SELECT_SIZE' && (
-            <div className="space-y-6 text-center">
+            <div className="space-y-6 text-center animate-in fade-in duration-500">
               <h3 className="text-sm font-black uppercase tracking-[0.2em] text-[#A855F7]">Buena elección, te verás cool 🔥</h3>
               <div className="grid grid-cols-3 gap-4">
                 {service.sizes?.map((size) => (
-                  <button key={size} onClick={() => { setSelectedSize(size); setStep('ENTER_DETAILS'); }} className="py-5 bg-black border-2 border-[#A855F7]/30 hover:border-[#A855F7] rounded-sm font-black text-white">
+                  <button key={size} onClick={() => { setSelectedSize(size); setStep('ENTER_DETAILS'); }} className="py-5 bg-black border-2 border-[#A855F7]/30 hover:border-[#A855F7] rounded-sm font-black text-white shadow-[0_0_15px_rgba(168,85,247,0.2)]">
                     {size}
                   </button>
                 ))}
@@ -125,62 +176,67 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
             </div>
           )}
 
-          {/* PASO: DATOS (Nombre y Teléfono) */}
+          {/* PASO: DATOS (Ambos) */}
           {step === 'ENTER_DETAILS' && (
             <div className="space-y-6">
-              <h3 className={`font-black italic ${isVcious ? 'text-[#A855F7]' : 'text-black'}`}>Completa tus datos para el envío</h3>
+              <div className="flex items-center gap-2">
+                {!isVcious && <button onClick={() => setStep('SELECT_TIME')} className="text-gray-400 hover:text-black transition-colors"><ChevronLeft size={20}/></button>}
+                <h3 className={`font-black italic ${isVcious ? 'text-[#A855F7]' : 'text-black'}`}>Tus datos de contacto</h3>
+              </div>
               <div className="space-y-4">
                 <input type="text" placeholder="Tu Nombre" value={name} onChange={e => setName(e.target.value)} className={`w-full py-3 border-b outline-none focus:border-[#A855F7] font-medium bg-transparent ${isVcious ? 'text-white' : 'text-black'}`} />
-                <input type="tel" placeholder="WhatsApp (10 dígitos)" value={phone} onChange={e => setPhone(e.target.value)} className={`w-full py-3 border-b outline-none focus:border-[#A855F7] font-medium bg-transparent ${isVcious ? 'text-white' : 'text-black'}`} />
+                <input type="tel" placeholder="WhatsApp" value={phone} onChange={e => setPhone(e.target.value)} className={`w-full py-3 border-b outline-none focus:border-[#A855F7] font-medium bg-transparent ${isVcious ? 'text-white' : 'text-black'}`} />
               </div>
               <button 
-                onClick={() => isVcious ? setStep('SELECT_PAYMENT_METHOD') : handleBarberBooking()}
+                onClick={() => isVcious ? setStep('SELECT_PAYMENT_METHOD') : handleBook()}
                 disabled={!name || !phone || isSubmitting}
-                className={`w-full py-4 font-black uppercase tracking-widest ${isVcious ? 'bg-[#A855F7] text-white' : 'bg-black text-white'} disabled:opacity-50`}
+                className={`w-full py-4 font-black uppercase tracking-widest transition-all ${isVcious ? 'bg-[#A855F7] text-white hover:bg-white hover:text-black' : 'bg-black text-white hover:bg-[#A855F7]'} disabled:opacity-50`}
               >
                 {isSubmitting ? 'Procesando...' : (isVcious ? 'Siguiente' : 'Confirmar Cita')}
               </button>
             </div>
           )}
 
-          {/* PASO: MÉTODO DE PAGO */}
+          {/* PASO: MÉTODOS DE PAGO (V-cious) */}
           {step === 'SELECT_PAYMENT_METHOD' && (
             <div className="space-y-4">
-              <h3 className="text-xs font-black uppercase text-[#A855F7] text-center mb-6 tracking-widest">¿Cómo prefieres pagar?</h3>
-              <button onClick={() => handleProductPurchase('MercadoPago')} className="w-full flex items-center justify-between p-5 border border-white/10 bg-white/5 hover:bg-[#A855F7] transition-all">
-                <div className="text-left"><p className="font-black text-[10px] uppercase">Tarjeta / Mercado Pago</p><p className="text-[9px] opacity-60">Total: ${finalPriceMP}</p></div>
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[#A855F7] text-center mb-6">Elige tu forma de pago</h3>
+              <button onClick={() => processPayment('MercadoPago')} className="w-full flex items-center justify-between p-5 border border-white/10 bg-white/5 hover:bg-[#A855F7] group transition-all text-left">
+                <div><p className="font-black text-[10px] uppercase">Tarjeta / Mercado Pago</p><p className="text-[9px] opacity-60 mt-1">Total (3.5%): ${finalPriceMP}</p></div>
                 <ChevronRight size={18} />
               </button>
-              <button onClick={() => handleProductPurchase('Transferencia')} className="w-full flex items-center justify-between p-5 border-2 border-white hover:bg-white hover:text-black transition-all">
-                <div className="text-left"><p className="font-black text-[10px] uppercase">Transferencia BBVA</p><p className="text-[9px] opacity-60">Total: ${service.price}</p></div>
+              <button onClick={() => processPayment('Transferencia')} className="w-full flex items-center justify-between p-5 border-2 border-white hover:bg-white hover:text-black transition-all text-left">
+                <div><p className="font-black text-[10px] uppercase">Transferencia BBVA</p><p className="text-[9px] opacity-60 mt-1">Precio Original: ${service.price}</p></div>
                 <ChevronRight size={18} />
               </button>
             </div>
           )}
 
-          {/* ... resto de pasos (BBVA y Confirmación) se mantienen igual ... */}
+          {/* PASO: DATOS BBVA (V-cious) */}
           {step === 'SHOW_BBVA_DATA' && (
             <div className="space-y-6 text-center animate-in zoom-in">
               <div className="p-6 bg-white/5 border border-[#A855F7]/30 rounded-sm">
-                <p className="text-[10px] font-black uppercase text-[#A855F7] mb-4 tracking-widest flex items-center justify-center gap-2">
-                   <Landmark size={14} /> Cuenta BBVA México
-                </p>
-                <div className="space-y-2 text-sm font-mono">
+                <p className="text-[10px] font-black uppercase text-[#A855F7] mb-4 tracking-widest flex items-center justify-center gap-2"><Landmark size={14} /> BBVA México</p>
+                <div className="space-y-2 text-sm font-mono text-left">
                   <p className="flex justify-between border-b border-white/5 pb-1"><span className="opacity-40 uppercase text-[10px]">Tarjeta:</span> 4152 3144 3526 8290</p>
                   <p className="flex justify-between border-b border-white/5 pb-1"><span className="opacity-40 uppercase text-[10px]">Nombre:</span> Juan Carlos D</p>
-                  <p className="flex justify-between"><span className="opacity-40 uppercase text-[10px]">Monto:</span> ${service.price}</p>
+                  <p className="flex justify-between border-b border-white/5 pb-1"><span className="opacity-40 uppercase text-[10px]">Monto:</span> ${service.price}</p>
                 </div>
               </div>
-              <p className="text-[10px] italic text-gray-400">Muestra captura a Manuel Soprano.</p>
-              <button onClick={() => setStep('CONFIRMATION')} className="w-full py-4 bg-white text-black font-black uppercase text-xs">Ya transferí</button>
+              <div className="p-4 border border-yellow-500/50 bg-yellow-500/5 text-[10px] italic text-gray-400">
+                 ⚠️ Debes mostrar captura a **Manuel Soprano** para la entrega.
+              </div>
+              <button onClick={() => setStep('CONFIRMATION')} className="w-full py-4 bg-white text-black font-black uppercase text-xs tracking-widest">Ya hice mi transferencia</button>
             </div>
           )}
 
+          {/* ÉXITO (Ambos) */}
           {step === 'CONFIRMATION' && (
             <div className="text-center py-10 animate-in fade-in zoom-in">
               <CheckCircle className="mx-auto text-[#A855F7] mb-4" size={60} />
               <h2 className={`text-2xl font-bold italic ${isVcious ? 'text-white' : 'text-black'}`}>¡Todo listo!</h2>
-              <button onClick={onClose} className="mt-8 font-bold underline">Cerrar</button>
+              <p className="text-gray-500 text-sm mt-2">El Fachebot registró tu solicitud correctamente.</p>
+              <button onClick={onClose} className="mt-8 font-bold underline decoration-[#A855F7] underline-offset-4">Cerrar</button>
             </div>
           )}
         </div>
