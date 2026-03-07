@@ -58,14 +58,19 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
       source: 'web',
     };
 
+    // 1. Enviar webhook n8n
     try {
-      // 1. Enviar webhook n8n
       await fetch(N8N_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+    } catch (error) {
+      console.error("Error enviando webhook a n8n:", error);
+      // Continuamos con el flujo, no bloqueamos la inserción en BD
+    }
 
+    try {
       // 2. Guardar en Supabase (Solo Citas)
       if (service.category !== 'Productos' && selectedDate && selectedTime) {
         // Combinar fecha y hora para el timestamp de inicio
@@ -125,7 +130,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
         }
       }
     } catch (error) {
-      console.error("Error enviando a n8n o supabase:", error);
+      console.error("Error guardando en Supabase:", error);
     }
   };
 
