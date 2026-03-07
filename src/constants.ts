@@ -1,7 +1,7 @@
 import { Service, Professional } from './types';
 
-// Webhook de tu Raspberry Pi / n8n
-export const N8N_WEBHOOK_URL = 'https://n8n.dimotic.uk/webhook/facheritos';
+// Webhook de tu n8n
+export const N8N_WEBHOOK_URL = 'https://n8n.dimotic.uk/webhook/saas';
 
 export const CATEGORIES = ['Todos', 'Cortes', 'Barba', 'Combos', 'Faciales', 'Productos'];
 

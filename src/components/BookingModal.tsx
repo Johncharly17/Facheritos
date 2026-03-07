@@ -91,7 +91,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
   }, [step, selectedDate, selectedPro, service.category]);
 
   const handlePayloadSend = async (method?: string, price?: number) => {
-    const payload: BookingPayload = {
+    const payload = {
       nombre_cliente: name,
       telefono_cliente: phone,
       servicio_id: service.id,
@@ -102,19 +102,19 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
       barbero_id: service.category === 'Productos' ? 'V-CIOUS-SPOT' : (selectedPro?.id || 'P1'),
       metodo_pago: method || 'Cita Presencial',
       source: 'web',
+      source_url: window.location.href // Obteniendo la URL de origen
     };
 
-    // Comentado temporalmente por petición del usuario para probar
-    // try {
-    //   await fetch(N8N_WEBHOOK_URL, {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(payload),
-    //   });
-    // } catch (error) {
-    //   console.error("Error enviando webhook a n8n:", error);
-    // }
-
+    // Enviar webhook a n8n
+    try {
+      await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      console.error("Error enviando webhook a n8n:", error);
+    }
 
     try {
       // 2. Guardar en Supabase (Solo Citas)
