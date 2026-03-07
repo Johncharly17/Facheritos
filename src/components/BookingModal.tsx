@@ -82,12 +82,17 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
 
         // Crear o buscar cliente por teléfono en este tenant
         let customerId;
-        const { data: existingCustomer } = await supabase
+        const { data: existingCustomer, error: searchError } = await supabase
           .from('customers')
           .select('id')
           .eq('tenant_id', tenantId)
           .eq('phone', phone)
           .single();
+
+        if (searchError && searchError.code !== 'PGRST116') { // PGRST116 is "0 rows returned" which is expected if new
+          console.error("Error buscando cliente:", searchError);
+          alert(`Error buscando cliente: ${searchError.message}`);
+        }
 
         if (existingCustomer) {
           customerId = existingCustomer.id;
@@ -99,13 +104,14 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
               full_name: name,
               phone: phone
             })
-            .select('id')
+            .select()
             .single();
 
           if (newCustomer) {
             customerId = newCustomer.id;
           } else {
             console.error('Error insertando cliente:', insertError);
+            alert(`Error insertando cliente: ${insertError?.message || 'Error desconocido'}`);
           }
         }
 
@@ -126,11 +132,13 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
 
           if (appointmentError) {
             console.error('Error insertando cita:', appointmentError);
+            alert(`Error insertando cita: ${appointmentError.message}\nDetalles: ${appointmentError.details || 'N/A'}`);
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error guardando en Supabase:", error);
+      alert(`Excepción capturada en Supabase: ${error?.message || 'Error desconocido'}`);
     }
   };
 
