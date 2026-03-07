@@ -58,17 +58,17 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
       source: 'web',
     };
 
-    // 1. Enviar webhook n8n
-    try {
-      await fetch(N8N_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-    } catch (error) {
-      console.error("Error enviando webhook a n8n:", error);
-      // Continuamos con el flujo, no bloqueamos la inserción en BD
-    }
+    // Comentado temporalmente por petición del usuario para probar
+    // try {
+    //   await fetch(N8N_WEBHOOK_URL, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(payload),
+    //   });
+    // } catch (error) {
+    //   console.error("Error enviando webhook a n8n:", error);
+    // }
+
 
     try {
       // 2. Guardar en Supabase (Solo Citas)
