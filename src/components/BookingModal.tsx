@@ -19,6 +19,8 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookedTimeSlots, setBookedTimeSlots] = useState<string[]>([]);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
   const nextDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
@@ -41,8 +43,52 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
       setSelectedSize(null);
       setSelectedDate(null);
       setSelectedTime(null);
+      setBookedTimeSlots([]);
     }
   }, [isOpen, service]);
+
+  useEffect(() => {
+    async function fetchBookedSlots() {
+      if (step === 'SELECT_TIME' && selectedDate && service.category !== 'Productos') {
+        setIsLoadingSlots(true);
+        try {
+          const tenantId = '9f29904e-4490-4a37-b58f-2752ca528114';
+          const staffId = selectedPro?.id || 'f5b018a0-82ac-448a-8426-acac6363325d';
+
+          const startOfDay = new Date(`${selectedDate}T00:00:00`).toISOString();
+          const endOfDay = new Date(`${selectedDate}T23:59:59`).toISOString();
+
+          const { data, error } = await supabase
+            .from('appointments')
+            .select('start_time')
+            .eq('tenant_id', tenantId)
+            .eq('staff_id', staffId)
+            .gte('start_time', startOfDay)
+            .lte('start_time', endOfDay)
+            .neq('status', 'cancelled');
+
+          if (error) {
+            console.error("Error fetching appointments:", error);
+            setBookedTimeSlots([]);
+          } else if (data) {
+            const booked = data.map(app => {
+              const dateObj = new Date(app.start_time);
+              const hours = dateObj.getHours().toString().padStart(2, '0');
+              const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+              return `${hours}:${minutes}`;
+            });
+            setBookedTimeSlots(booked);
+          }
+        } catch (err) {
+          console.error("Error in fetchBookedSlots:", err);
+          setBookedTimeSlots([]);
+        } finally {
+          setIsLoadingSlots(false);
+        }
+      }
+    }
+    fetchBookedSlots();
+  }, [step, selectedDate, selectedPro, service.category]);
 
   const handlePayloadSend = async (method?: string, price?: number) => {
     const payload: BookingPayload = {
@@ -227,11 +273,25 @@ const BookingModal: React.FC<BookingModalProps> = ({ service, isOpen, onClose })
                 <button onClick={() => setStep('SELECT_DATE')} className="text-gray-400 hover:text-black transition-colors"><ChevronLeft size={20} /></button>
                 <h3 className="font-bold italic">¿A qué hora?</h3>
               </div>
-              <div className="grid grid-cols-3 gap-3">
-                {TIME_SLOTS.map((time) => (
-                  <button key={time} onClick={() => { setSelectedTime(time); setStep('ENTER_DETAILS'); }} className="py-3 border rounded-sm text-sm font-bold hover:bg-black hover:text-white transition-all">{time}</button>
-                ))}
-              </div>
+              {isLoadingSlots ? (
+                <div className="text-center py-8 text-gray-400 font-medium italic animate-pulse">Buscando horarios disponibles...</div>
+              ) : (
+                <div className="grid grid-cols-3 gap-3">
+                  {TIME_SLOTS.map((time) => {
+                    const isBooked = bookedTimeSlots.includes(time);
+                    return (
+                      <button
+                        key={time}
+                        onClick={() => { if (!isBooked) { setSelectedTime(time); setStep('ENTER_DETAILS'); } }}
+                        disabled={isBooked}
+                        className={`py-3 border rounded-sm text-sm font-bold transition-all ${isBooked ? 'bg-gray-100 text-gray-400 line-through cursor-not-allowed border-gray-200' : 'hover:bg-black hover:text-white'}`}
+                      >
+                        {time}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
