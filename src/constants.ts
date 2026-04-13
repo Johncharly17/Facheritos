@@ -1,7 +1,7 @@
 import { Service, Professional } from './types';
 
 // Webhook de tu n8n
-export const N8N_WEBHOOK_URL = 'https://n8n.dimotic.uk/webhook/saas';
+export const N8N_WEBHOOK_URL = 'https://n8n.dimotic.com/webhook/saas';
 
 export const CATEGORIES = ['Todos', 'Cortes', 'Barba', 'Combos', 'Faciales', 'Productos'];
 
@@ -16,9 +16,9 @@ export const SERVICES: Service[] = [
   },
   {
     id: '4982db3d-e842-42cd-8509-1e80545c671e',
-    name: 'Perfilado de Barba',
+    name: 'Corte y Barba',
     duration: 'Definición de líneas con navaja para una barba simétrica y bien cuidada.',
-    price: 100,
+    price: 300,
     category: 'Barba',
     image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1765406114/ec5c2f9c-4cf4-42b6-9816-ce378c3a0a38.png',
   },
@@ -87,7 +87,7 @@ export const PROFESSIONALS: Professional[] = [
 ];
 
 export const TIME_SLOTS = [
-  '13:00', '15:00', '16:00', '17:00', '18:00'
+  '15:00', '16:00', '17:00', '18:00'
 ];
 
 export const COMPANY_INFO = {

@@ -1,37 +1,125 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Facheritos Barber Shop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: #ffffff;
-        color: #000000;
-      }
-      .hide-scrollbar::-webkit-scrollbar { display: none; }
-      .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      @keyframes neon-flicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-      text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #A855F7, 0 0 82px #A855F7;
-      opacity: 1;
-    }
-    20%, 22%, 24%, 55% {
-      text-shadow: none;
-      opacity: 0.5;
-    }
-  }
-  .animate-neon {
-    animation: neon-flicker 2s infinite alternate;
-  }
-    </style>
-    </head>
-  <body>
-    <div id="root"></div>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Inter:wght@100;300;400;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#a76900",
+                        "surface-dim": "#131313",
+                        "primary-fixed-dim": "#ecb1ff",
+                        "primary-fixed": "#f9d8ff",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-tertiary-fixed": "#2b1700",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "outline-variant": "#514254",
+                        "on-primary-container": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "secondary-fixed": "#e3e2e2",
+                        "tertiary-fixed": "#ffddb8",
+                        "inverse-on-surface": "#313030",
+                        "on-error": "#690005",
+                        "surface-container": "#201f1f",
+                        "outline": "#9d8ba0",
+                        "inverse-primary": "#9900ce",
+                        "background": "#131313",
+                        "surface-variant": "#353534",
+                        "on-tertiary-container": "#ffffff",
+                        "surface-container-low": "#1c1b1b",
+                        "on-primary": "#520070",
+                        "on-background": "#e5e2e1",
+                        "primary-container": "#bf00ff",
+                        "surface": "#131313",
+                        "on-secondary": "#2f3131",
+                        "on-primary-fixed": "#320046",
+                        "secondary-container": "#484949",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb960",
+                        "surface-container-highest": "#353534",
+                        "surface-bright": "#3a3939",
+                        "on-primary-fixed-variant": "#75009e",
+                        "tertiary": "#ffb960",
+                        "secondary": "#c6c6c6",
+                        "surface-container-lowest": "#0e0e0e",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6",
+                        "on-surface": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#464747",
+                        "surface-tint": "#ecb1ff",
+                        "on-secondary-container": "#b8b8b8",
+                        "primary": "#ecb1ff",
+                        "surface-container-high": "#2a2a2a",
+                        "on-surface-variant": "#d5c0d7",
+                        "on-tertiary": "#472a00",
+                        "inverse-surface": "#e5e2e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "elegant": ["'Playfair Display'", "serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+      .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .neon-glow-hover:hover {
+          box-shadow: 0 0 20px 2px rgba(255, 255, 255, 0.4);
+          border-color: #ffffff !important;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+          background: #0e0e0e;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #353534;
+      }
+      .glass-panel {
+          background: rgba(19, 19, 19, 0.6);
+          backdrop-filter: blur(20px);
+      }
+      .barber-pole {
+          background: repeating-linear-gradient(
+              -45deg,
+              #000,
+              #000 8px,
+              #fff 8px,
+              #fff 16px
+          );
+          background-size: 22.6px 22.6px;
+          animation: pole-spin 1s linear infinite;
+      }
+      @keyframes pole-spin {
+          0% { background-position: 0 0; }
+          100% { background-position: 22.6px 22.6px; }
+      }
+    </style>
+  </head>
+  <body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-white overflow-hidden m-0 p-0">
+    <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
