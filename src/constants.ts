@@ -12,7 +12,7 @@ export const SERVICES: Service[] = [
     duration: 'Corte tradicional con tijera y máquina para un look impecable y profesional.',
     price: 200,
     category: 'Cortes',
-    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1766325624/ads_1_xqhicf.jpg',
+    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1777064478/27_qr4mft.jpg',
   },
   {
     id: '4982db3d-e842-42cd-8509-1e80545c671e',
@@ -20,7 +20,7 @@ export const SERVICES: Service[] = [
     duration: 'Definición de líneas con navaja para una barba simétrica y bien cuidada.',
     price: 300,
     category: 'Barba',
-    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1765406114/ec5c2f9c-4cf4-42b6-9816-ce378c3a0a38.png',
+    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1777064478/28_oitrmd.jpg',
   },
   {
     id: '08eb0c2d-1cad-4ba2-a5a0-f499cd90fad4',
@@ -28,7 +28,7 @@ export const SERVICES: Service[] = [
     duration: 'Limpieza profunda que elimina células muertas y deja la piel fresca y renovada.',
     price: 250,
     category: 'Faciales',
-    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1766326408/Captura_de_pantalla_2025-12-21_081105_i9oqta.png',
+    image: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1777064478/26_oytm68.jpg',
   },
   // --- SECCIÓN DE PRODUCTOS ---
   {
