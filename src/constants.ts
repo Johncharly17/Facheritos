@@ -82,7 +82,7 @@ export const PROFESSIONALS: Professional[] = [
   {
     id: 'f5b018a0-82ac-448a-8426-acac6363325d',
     name: 'Manuel Soprano',
-    avatar: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1767629608/manuel-soprano_ptimyv.jpg',
+    avatar: 'https://res.cloudinary.com/dqwslpah7/image/upload/v1776016189/page_1_mrj3tt.jpg',
   },
 ];
 
