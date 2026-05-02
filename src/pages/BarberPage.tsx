@@ -44,6 +44,7 @@ const BarberPage: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [viewingService, setViewingService] = useState<Service | null>(null);
   const [bookedTimes, setBookedTimes] = useState<string[]>([]);
+  const [activeBarbers, setActiveBarbers] = useState<Record<string, boolean>>({});
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [showDataModal, setShowDataModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +57,27 @@ const BarberPage: React.FC = () => {
     const interval = setInterval(() => {
       setCurrentHeroIndex(prev => (prev + 1) % HERO_IMAGES.length);
     }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    async function fetchBarberStatus() {
+      const tenant_id = '9f29904e-4490-4a37-b58f-2752ca528114';
+      const { data, error } = await supabase.from('user_profiles')
+        .select('id, is_active_page')
+        .eq('tenant_id', tenant_id);
+      
+      if (data) {
+        const statusMap: Record<string, boolean> = {};
+        data.forEach(profile => {
+          statusMap[profile.id] = profile.is_active_page;
+        });
+        setActiveBarbers(statusMap);
+      }
+    }
+    
+    fetchBarberStatus();
+    const interval = setInterval(fetchBarberStatus, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -288,28 +310,51 @@ const BarberPage: React.FC = () => {
               <h2 className="font-headline font-bold text-2xl uppercase tracking-widest text-white">Staff</h2>
             </header>
             <div className="flex flex-wrap gap-8">
-              {PROFESSIONALS.map(pro => (
-                <button
-                  key={pro.id}
-                  onClick={() => setSelectedProfessional(pro)}
-                  className={`flex flex-col items-center gap-4 group transition-all duration-300 ${selectedProfessional?.id === pro.id
-                    ? 'opacity-100 grayscale-0'
-                    : selectedProfessional ? 'opacity-50 grayscale hover:grayscale-0 hover:opacity-100' : 'opacity-100 hover:scale-105'
+              {PROFESSIONALS.map(pro => {
+                const isBlocked = activeBarbers[pro.id] === false;
+
+                return (
+                  <button
+                    key={pro.id}
+                    onClick={() => {
+                      if (isBlocked) {
+                        alert(`El barbero ${pro.name} por el momento está ocupado. Por favor, intenta de nuevo más tarde o elige otro barbero.`);
+                        return;
+                      }
+                      setSelectedProfessional(pro);
+                    }}
+                    className={`flex flex-col items-center gap-4 group transition-all duration-300 ${
+                      isBlocked ? 'opacity-40 grayscale cursor-not-allowed' :
+                      selectedProfessional?.id === pro.id
+                        ? 'opacity-100 grayscale-0'
+                        : selectedProfessional ? 'opacity-50 grayscale hover:grayscale-0 hover:opacity-100' : 'opacity-100 hover:scale-105'
                     }`}
-                >
-                  <div className={`relative p-1 rounded-full border-2 transition-colors duration-300 ${selectedProfessional?.id === pro.id
-                    ? 'border-white ring-4 ring-white/30 shadow-[0_0_20px_rgba(255,255,255,0.4)]'
-                    : 'border-transparent group-hover:border-white/50 group-hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]'
+                  >
+                    <div className={`relative p-1 rounded-full border-2 transition-colors duration-300 ${
+                      isBlocked ? 'border-red-500/50' :
+                      selectedProfessional?.id === pro.id
+                        ? 'border-white ring-4 ring-white/30 shadow-[0_0_20px_rgba(255,255,255,0.4)]'
+                        : 'border-transparent group-hover:border-white/50 group-hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]'
                     }`}>
-                    <img className="w-24 h-24 object-cover rounded-full" alt={pro.name} src={pro.avatar} />
-                  </div>
-                  <div className="text-center">
-                    <p className={`font-headline font-bold transition-colors drop-shadow-[0_0_5px_rgba(255,255,255,0.3)] ${selectedProfessional?.id === pro.id ? 'text-white' : 'text-secondary group-hover:text-white'
+                      <img className="w-24 h-24 object-cover rounded-full" alt={pro.name} src={pro.avatar} />
+                      {isBlocked && (
+                        <div className="absolute inset-0 m-1 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-[1px]">
+                          <span className="font-headline text-[10px] uppercase tracking-widest text-white font-bold rotate-[-15deg] px-2 py-1 bg-red-600/80 rounded shadow-[0_0_15px_rgba(255,0,0,0.5)]">
+                            Ocupado
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-center">
+                      <p className={`font-headline font-bold transition-colors drop-shadow-[0_0_5px_rgba(255,255,255,0.3)] ${
+                        isBlocked ? 'text-red-400' :
+                        selectedProfessional?.id === pro.id ? 'text-white' : 'text-secondary group-hover:text-white'
                       }`}>{pro.name.split(' ')[0]}</p>
-                    <p className="text-[10px] text-outline uppercase tracking-widest">Master Barber</p>
-                  </div>
-                </button>
-              ))}
+                      <p className="text-[10px] text-outline uppercase tracking-widest">Master Barber</p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </section>
 
