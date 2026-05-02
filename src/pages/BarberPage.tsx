@@ -127,37 +127,24 @@ const BarberPage: React.FC = () => {
       const tenant_id = '9f29904e-4490-4a37-b58f-2752ca528114';
       const formattedPhone = clientPhone.startsWith('52') ? clientPhone : `52${clientPhone}`;
       
-      let customerId = '';
-      const { data: qCustomer } = await supabase.from('customers')
-        .select('id').eq('phone', formattedPhone).eq('tenant_id', tenant_id).maybeSingle();
-      
-      if (qCustomer?.id) {
-        customerId = qCustomer.id;
-      } else {
-        const { data: nCustomer, error } = await supabase.from('customers').insert({
-          tenant_id,
-          full_name: clientName,
-          phone: formattedPhone
-        }).select('id').single();
-        if (nCustomer?.id) customerId = nCustomer.id;
-      }
+      const startStr = `${selectedDate}T${selectedTime}:00`;
+      const startDate = new Date(startStr);
+      const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
 
-      if (customerId) {
-        const startStr = `${selectedDate}T${selectedTime}:00`;
-        const startDate = new Date(startStr);
-        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+      // Usar la función segura RPC que corre en modo Admin para evitar el bloqueo de RLS en 'customers'
+      const { data, error } = await supabase.rpc('public_book_appointment', {
+        p_tenant_id: tenant_id,
+        p_full_name: clientName,
+        p_phone: formattedPhone,
+        p_staff_id: selectedProfessional.id,
+        p_service_id: selectedService.id,
+        p_start_time: startDate.toISOString(),
+        p_end_time: endDate.toISOString(),
+        p_final_price: selectedService.price
+      });
 
-        await supabase.from('appointments').insert({
-          tenant_id,
-          customer_id: customerId,
-          staff_id: selectedProfessional.id,
-          service_id: selectedService.id,
-          start_time: startDate.toISOString(),
-          end_time: endDate.toISOString(),
-          status: 'pending',
-          final_price: selectedService.price,
-          is_express: false
-        });
+      if (error) {
+        throw error;
       }
 
       try {
