@@ -192,9 +192,9 @@ const BarberPage: React.FC = () => {
   const currentStep = (!selectedService) ? 1 : (!selectedProfessional) ? 2 : (!selectedDate || !selectedTime) ? 3 : 4;
 
   return (
-    <div className="flex h-screen w-full bg-background text-on-surface font-body selection:bg-primary-container selection:text-white overflow-hidden m-0 p-0">
-      {/* LEFT SIDE: 40% FIXED HERO */}
-      <aside className="hidden md:flex md:w-[40%] h-full relative overflow-hidden shrink-0">
+    <div className="flex flex-col md:flex-row h-[100dvh] w-full bg-background text-on-surface font-body selection:bg-primary-container selection:text-white overflow-hidden m-0 p-0">
+      {/* LEFT SIDE: 40% FIXED HERO (Desktop) / 35vh Top Hero (Mobile) */}
+      <aside className="flex w-full h-[35vh] md:w-[40%] md:h-full relative overflow-hidden shrink-0">
         <div className="absolute inset-0 z-0 bg-black">
           {HERO_IMAGES.map((img, idx) => (
             <img
@@ -206,23 +206,23 @@ const BarberPage: React.FC = () => {
           ))}
           <div className="absolute inset-0 bg-gradient-to-tr from-surface via-surface/40 to-primary-container/20 mix-blend-multiply"></div>
         </div>
-        <div className="relative z-10 w-full h-full flex flex-col justify-between p-12 lg:p-20">
-          <div className="flex items-center space-x-4">
-            <div className="w-5 h-20 rounded-full barber-pole border-2 border-white shadow-[0_0_15px_rgba(255,255,255,0.5)]"></div>
+        <div className="relative z-10 w-full h-full flex flex-col justify-between p-6 sm:p-8 md:p-12 lg:p-20">
+          <div className="flex items-center space-x-3 md:space-x-4">
+            <div className="w-3 h-12 md:w-5 md:h-20 rounded-full barber-pole border md:border-2 border-white shadow-[0_0_15px_rgba(255,255,255,0.5)]"></div>
             <div className="space-y-1">
-              <span className="font-elegant italic font-medium tracking-wide text-6xl lg:text-7xl text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">Facheritos</span>
-              <div className="h-0.5 w-32 bg-white/60"></div>
+              <span className="font-elegant italic font-medium tracking-wide text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">Facheritos</span>
+              <div className="h-0.5 w-20 md:w-32 bg-white/60"></div>
             </div>
           </div>
-          <div className="space-y-6">
-            <h1 className="font-headline font-extrabold text-5xl lg:text-7xl leading-tight text-white tracking-tight">
-              Reserva <br /> <span className="text-primary-fixed-dim">tu estilo</span>
+          <div className="space-y-2 md:space-y-6 mt-auto mb-2 md:mb-0 md:mt-0">
+            <h1 className="font-headline font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-tight text-white tracking-tight">
+              Reserva <span className="md:block"><span className="text-primary-fixed-dim">tu estilo</span></span>
             </h1>
-            <p className="text-secondary max-w-sm font-light tracking-wide leading-relaxed">
+            <p className="hidden md:block text-secondary max-w-sm font-light tracking-wide leading-relaxed">
               Experiencia de barbería premium donde los hombres se sienten como hombres.
             </p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4">
             <span className="material-symbols-outlined text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
             <span className="font-label uppercase tracking-widest text-xs text-white/80">Since 2022</span>
           </div>
@@ -230,18 +230,17 @@ const BarberPage: React.FC = () => {
       </aside>
 
       {/* RIGHT SIDE: 60% SCROLLABLE CONTENT */}
-      <main className="w-full md:w-[60%] h-full bg-surface overflow-y-auto custom-scrollbar relative flex flex-col">
+      <main className="w-full h-[65vh] md:w-[60%] md:h-full bg-surface overflow-y-auto custom-scrollbar relative flex flex-col">
         {/* TopNavBar */}
-        <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 bg-[#131313]/80 backdrop-blur-xl border-none bg-gradient-to-b from-black/20 to-transparent md:w-[60%] md:right-0">
-          <div className="font-elegant italic font-medium tracking-wide text-3xl text-white md:hidden drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">Facheritos</div>
-          <div className="hidden lg:flex items-center space-x-8 ml-auto text-right w-full justify-end">
+        <nav className="fixed top-0 w-full z-50 flex justify-end items-center px-8 py-4 bg-transparent md:bg-[#131313]/80 md:backdrop-blur-xl border-none md:bg-gradient-to-b md:from-black/20 md:to-transparent md:w-[60%] md:right-0 pointer-events-none md:pointer-events-auto">
+          <div className="hidden md:flex items-center space-x-8 ml-auto text-right w-full justify-end pointer-events-auto">
             <a className="font-headline uppercase tracking-[0.1em] text-sm text-white border-b-2 border-white pb-1 shadow-[0_4px_10px_rgba(255,255,255,0.3)]" href="#">Reserva</a>
             <a className="font-headline uppercase tracking-[0.1em] text-sm text-[#e5e2e1] hover:text-white transition-colors" href="#redes" onClick={(e) => { e.preventDefault(); document.getElementById('redes')?.scrollIntoView({ behavior: 'smooth' }); }}>Contáctanos</a>
           </div>
         </nav>
 
         {/* Dynamic Tracker Header */}
-        <div className="pt-32 pb-4 px-6 md:px-12 lg:px-20 text-center flex flex-col items-center">
+        <div className="pt-8 md:pt-32 pb-4 px-6 md:px-12 lg:px-20 text-center flex flex-col items-center">
           <h2 className="font-headline text-3xl md:text-4xl font-extrabold tracking-widest uppercase text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] mb-4">
             {currentStep === 1 ? 'Elige tu Servicio' : currentStep === 2 ? 'Selecciona tu Barbero' : 'Fecha y Hora'}
           </h2>
@@ -296,7 +295,7 @@ const BarberPage: React.FC = () => {
             <header className="flex items-end justify-between border-b border-outline-variant/10 pb-4">
               <h2 className="font-headline font-bold text-2xl uppercase tracking-widest text-white">Staff</h2>
             </header>
-            <div className="flex flex-wrap gap-8">
+            <div className="flex flex-wrap gap-4 sm:gap-8">
               {PROFESSIONALS.map(pro => {
                 const isBlocked = activeBarbers[pro.id] === false;
 
@@ -323,7 +322,7 @@ const BarberPage: React.FC = () => {
                         ? 'border-white ring-4 ring-white/30 shadow-[0_0_20px_rgba(255,255,255,0.4)]'
                         : 'border-transparent group-hover:border-white/50 group-hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]'
                     }`}>
-                      <img className="w-24 h-24 object-cover rounded-full" alt={pro.name} src={pro.avatar} />
+                      <img className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full" alt={pro.name} src={pro.avatar} />
                       {isBlocked && (
                         <div className="absolute inset-0 m-1 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-[1px]">
                           <span className="font-headline text-[10px] uppercase tracking-widest text-white font-bold rotate-[-15deg] px-2 py-1 bg-red-600/80 rounded shadow-[0_0_15px_rgba(255,0,0,0.5)]">
